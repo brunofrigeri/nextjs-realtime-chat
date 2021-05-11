@@ -1,23 +1,42 @@
-# Next.js + Tailwind CSS Example
+# Next.js + Tailwind CSS + Firebase Authentication + Typescript Example
 
-This example shows how to use [Tailwind CSS](https://tailwindcss.com/) (v2.1) with Next.js. It follows the steps outlined in the official [Tailwind docs](https://tailwindcss.com/docs/guides/nextjs).
+This example shows how to use [Tailwind CSS](https://tailwindcss.com/) (v2.1), [Typescript](https://www.typescriptlang.org/) (v4.2.4) and [Firebase Authentication](https://firebase.google.com/docs/auth) (v8.5.0) with Next.js. Besides that, you'll be able to see how to use Firebase Realtime Database, but you can also use Firestore.
+## Getting started
 
-It uses the new [`Just-in-Time Mode`](https://tailwindcss.com/docs/just-in-time-mode) for Tailwind CSS.
+### Cloning the repository (you can also fork)
 
-## Deploy your own
+- HTTPS
+```bash
+git clone https://github.com/brunofrigeri/with-firebase-auth.git
+```
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example):
+- SSH
+```bash
+git clone git@github.com:brunofrigeri/with-firebase-auth.git
+```
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-tailwindcss&project-name=with-tailwindcss&repository-name=with-tailwindcss)
+### Installing all dependencies
+
+```bash
+yarn install
+```
+
+
+## Setting up Firebase
+
+To setup firebase to your project, you'll need to go into your Firebase settings and get your service_account JSON, that will be able to
+return all firebase keys to run our project.
+
+If you weren't able to find it. Go to Firebase Console and then `Settings -> Service Account`, click on `Generate new private key` and then `Generate key`, after that store this JSON that contains your keys.
+
+With that in hands, you'll need to create a `.env.local` file (example on `.env.example`) and store the values on your JSON into their respective key.
 
 ## How to use
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init) or [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
+Now you just need to run:
 
 ```bash
-npx create-next-app --example with-tailwindcss with-tailwindcss-app
-# or
-yarn create next-app --example with-tailwindcss with-tailwindcss-app
+yarn run dev
 ```
 
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
+Voi lá, your Firebase Authentication + Next.js application is already running, just login and test it out!!
