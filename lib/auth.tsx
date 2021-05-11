@@ -2,11 +2,11 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import firebase from './firebase'
 
 type User = {
-  uid: string
+  uid?: string
   name: string | null
-  email: string | null
+  email?: string | null
   photoURL: string | null
-  token: string | null
+  token?: string | null
 }
 
 export interface AuthContext {
@@ -14,6 +14,7 @@ export interface AuthContext {
   loading: boolean
   signInWithEmailAndPassword: (email: string, password: string) => {}
   signOut: () => {}
+  updateUser: (data: { name: string; photoURL: string | null }) => {}
 }
 
 const formatAuth = (user: firebase.User): User => ({
@@ -29,6 +30,7 @@ const authContext = createContext<AuthContext>({
   loading: false,
   signInWithEmailAndPassword: async (email, password) => {},
   signOut: async () => {},
+  updateUser: async (data) => {},
 })
 
 function useProvideAuth() {
@@ -49,10 +51,19 @@ function useProvideAuth() {
     }
   }
 
-  const signedIn = async (res: firebase.auth.UserCredential) => {
-    if (res.user) {
-      const user = formatAuth(res.user)
-    }
+  const updateUser = async (data: {
+    name: string
+    photoURL: string | null
+  }) => {
+    await firebase
+      .auth()
+      .currentUser?.updateProfile({
+        displayName: data.name,
+        photoURL: data.photoURL,
+      })
+      .then(() => {
+        setAuth({ ...auth, name: data.name, photoURL: data.photoURL })
+      })
   }
 
   const signInWithEmailAndPassword = async (
@@ -60,10 +71,7 @@ function useProvideAuth() {
     password: string
   ) => {
     setLoading(true)
-    return firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then(signedIn)
+    return firebase.auth().signInWithEmailAndPassword(email, password)
   }
 
   const clear = () => {
@@ -72,7 +80,6 @@ function useProvideAuth() {
   }
 
   const signOut = () => {
-    console.log('oi')
     return firebase.auth().signOut().then(clear)
   }
 
@@ -87,6 +94,7 @@ function useProvideAuth() {
     loading,
     signOut,
     signInWithEmailAndPassword,
+    updateUser,
   }
 }
 
