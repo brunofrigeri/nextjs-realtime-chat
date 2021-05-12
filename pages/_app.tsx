@@ -1,4 +1,4 @@
-import 'tailwindcss/tailwind.css'
+import '../styles/globals.css'
 import { AppProps } from 'next/dist/next-server/lib/router/router'
 import { AuthProvider } from '../lib/auth'
 

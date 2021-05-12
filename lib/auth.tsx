@@ -1,6 +1,13 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import firebase from './firebase'
 
+type UserAuthentication = {
+  name: string
+  email: string
+  password: string
+  photoURL?: string
+}
+
 type User = {
   uid?: string
   name: string | null
@@ -12,7 +19,9 @@ type User = {
 export interface AuthContext {
   auth: User | null
   loading: boolean
+  error: string | null
   signInWithEmailAndPassword: (email: string, password: string) => {}
+  createUserWithEmailAndPassword: (user: UserAuthentication) => {}
   signOut: () => {}
   updateUser: (data: { name: string; photoURL: string | null }) => {}
 }
@@ -28,26 +37,32 @@ const formatAuth = (user: firebase.User): User => ({
 const authContext = createContext<AuthContext>({
   auth: null,
   loading: false,
-  signInWithEmailAndPassword: async (email, password) => {},
+  error: null,
+  signInWithEmailAndPassword: async () => {},
+  createUserWithEmailAndPassword: async () => {},
   signOut: async () => {},
-  updateUser: async (data) => {},
+  updateUser: async () => {},
 })
 
 function useProvideAuth() {
   const [auth, setAuth] = useState<User | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
 
   const authStateChanged = async (authState: firebase.User) => {
     if (authState) {
       const formattedAuthState = formatAuth(authState)
 
-      formattedAuthState.token = await authState.getIdToken()
+      const token = await authState.getIdToken()
+      formattedAuthState.token = token
 
       setAuth(formattedAuthState)
       setLoading(false)
+      setError(null)
     } else {
       setAuth(null)
       setLoading(false)
+      setError(null)
     }
   }
 
@@ -71,12 +86,30 @@ function useProvideAuth() {
     password: string
   ) => {
     setLoading(true)
-    return firebase.auth().signInWithEmailAndPassword(email, password)
+    return firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .catch((err) => {
+        setError(err.message)
+        setLoading(false)
+      })
+  }
+
+  const createUserWithEmailAndPassword = async (user: UserAuthentication) => {
+    setLoading(true)
+    return firebase
+      .auth()
+      .createUserWithEmailAndPassword(user.email, user.password)
+      .catch((err) => {
+        setError(err.message)
+        setLoading(false)
+      })
   }
 
   const clear = () => {
     setAuth(null)
     setLoading(true)
+    setError(null)
   }
 
   const signOut = () => {
@@ -92,8 +125,10 @@ function useProvideAuth() {
   return {
     auth,
     loading,
+    error,
     signOut,
     signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
     updateUser,
   }
 }
