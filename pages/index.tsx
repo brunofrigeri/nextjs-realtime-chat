@@ -1,9 +1,10 @@
 import Link from 'next/link'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import Button from '../components/Button'
 import Auth from '../containers/Auth'
 import withAuth from '../hoc/withAuth'
 import { useAuth } from '../lib/auth'
+import firebase from '../lib/firebase'
 
 function Home() {
   const { signInWithEmailAndPassword, loading, error } = useAuth()
@@ -15,6 +16,10 @@ function Home() {
     e.preventDefault()
     signInWithEmailAndPassword(email, password)
   }
+
+  useEffect(() => {
+    firebase.storage().ref('users')
+  }, [])
 
   return (
     <Auth title={'Login'} description={'Welcome, login with your account!'}>

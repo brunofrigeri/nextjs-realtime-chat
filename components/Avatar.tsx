@@ -3,12 +3,14 @@ interface AvatarProps {
   name?: string
   scale?: number
   children?: React.ReactNode
+  onClick?(): void
 }
 
 export default function Avatar({
   image,
   name,
   scale = 1,
+  onClick,
   children,
 }: AvatarProps) {
   const width = `w-${20 * scale}`
@@ -17,10 +19,11 @@ export default function Avatar({
   return (
     <div
       className={`${width} ${height} relative flex rounded-full justify-center items-center bg-gray-200`}
+      onClick={onClick}
     >
       <div>
         {name && !image && (
-          <p className={`font-semibold ${scale <= 1 ? 'text-sm' : 'text-2xl'}`}>
+          <p className={`font-semibold ${scale < 1 ? 'text-sm' : 'text-2xl'}`}>
             {name
               .split(' ')
               .map((n) => n[0])
@@ -29,7 +32,7 @@ export default function Avatar({
               .toUpperCase()}
           </p>
         )}
-        {!!image && <img src={image} alt={'Avatar'} />}
+        {!!image && <img src={image} className="rounded-full" alt={'Avatar'} />}
       </div>
       {children}
     </div>

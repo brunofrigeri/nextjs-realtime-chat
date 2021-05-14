@@ -10,10 +10,12 @@ if (!admin.apps.length) {
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
     }),
     databaseURL: process.env.FIREBASE_DATABASE_URL,
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
   })
 }
 
 const db = admin.database()
 const auth = admin.auth()
+const storage = admin.storage()
 
-export { db, auth }
+export { db, auth, storage }

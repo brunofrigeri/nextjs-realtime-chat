@@ -4,7 +4,7 @@ import { useAuth } from '../lib/auth'
 
 export default function withAuth(Component: any) {
   return (props: any) => {
-    const { auth, loading } = useAuth()
+    const { auth } = useAuth()
     const router = useRouter()
 
     const isAuthenticated = !!auth?.uid
