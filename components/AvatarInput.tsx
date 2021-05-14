@@ -2,8 +2,8 @@ import { useRef } from 'react'
 import Avatar from './Avatar'
 
 interface AvatarInputProps {
-  value?: File
-  setValue(image: File | undefined): void
+  value?: File | string
+  setValue(image: File | string | undefined): void
 }
 
 export default function AvatarInput({ value, setValue }: AvatarInputProps) {
@@ -18,7 +18,11 @@ export default function AvatarInput({ value, setValue }: AvatarInputProps) {
   return (
     <div className="h-full flex justify-center items-center">
       <Avatar
-        image={value && URL.createObjectURL(value)}
+        image={
+          value && typeof value !== 'string'
+            ? URL.createObjectURL(value)
+            : value
+        }
         onClick={onAvatarPress}
       />
       <input

@@ -4,16 +4,16 @@ import { useAuth } from '../lib/auth'
 
 export default function withAuth(Component: any) {
   return (props: any) => {
-    const { auth } = useAuth()
+    const { auth, loading } = useAuth()
     const router = useRouter()
 
-    const isAuthenticated = !!auth?.uid
+    const isAuthenticated = auth
 
     const shouldRedirectToApp =
-      isAuthenticated && !router.pathname.startsWith('/auth')
+      isAuthenticated && !router.pathname.startsWith('/auth') && !loading
 
     const shouldRedirectToLogin =
-      !isAuthenticated && router.pathname.startsWith('/auth')
+      !isAuthenticated && router.pathname.startsWith('/auth') && !loading
 
     const redirectToApp = useCallback(() => {
       const appRedirectDestination = '/auth'
@@ -51,8 +51,6 @@ export default function withAuth(Component: any) {
     const isRedirecting = shouldRedirectToLogin || shouldRedirectToApp
 
     if (isRedirecting) return <p>Loading ... </p>
-
-    // if (loading) return <p>Loading ... </p>
 
     return <Component {...props} />
   }

@@ -1,4 +1,5 @@
 import firebase from '../lib/firebase'
+import { UserAuthentication } from '../lib/auth'
 
 const db = firebase.database()
 const storage = firebase.storage()
@@ -25,9 +26,17 @@ export async function createUser(
     })
 }
 
-export async function putProfilePhoto(uid: string, photoURL: File) {
-  return storage
-    .ref(`users/${uid}/profile.jpg`)
-    .put(photoURL)
-    .then((res) => console.log('SUCCESS', res))
+export async function updateUserProfile(user: UserAuthentication) {
+  const authUser = firebase.auth().currentUser
+
+  await authUser?.updateProfile({
+    displayName: user.name,
+    photoURL: (user.photoURL as string) || null,
+  })
+}
+
+export async function putProfilePhoto(uid: string, photoURL?: File) {
+  return photoURL
+    ? await storage.ref(`users/${uid}/profile.jpg`).put(photoURL)
+    : null
 }

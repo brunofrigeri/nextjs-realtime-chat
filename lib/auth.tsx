@@ -1,12 +1,12 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { putProfilePhoto } from './db'
+import { putProfilePhoto, updateUserProfile } from './db'
 import firebase from './firebase'
 
-type UserAuthentication = {
+export type UserAuthentication = {
   name: string
   email: string
   password: string
-  photoURL?: File
+  photoURL?: File | string
 }
 
 type User = {
@@ -53,7 +53,6 @@ function useProvideAuth() {
   const authStateChanged = async (authState: firebase.User) => {
     if (authState) {
       const formattedAuthState = formatAuth(authState)
-      console.log(authState.photoURL)
 
       const token = await authState.getIdToken()
       formattedAuthState.token = token
@@ -103,8 +102,23 @@ function useProvideAuth() {
       .auth()
       .createUserWithEmailAndPassword(user.email, user.password)
       .then((res) => {
-        if (res.user && user.photoURL)
-          putProfilePhoto(res.user.uid, user.photoURL)
+        if (res.user) {
+          putProfilePhoto(res.user.uid, user?.photoURL as File).then((res) => {
+            if (res) {
+              res.ref.getDownloadURL().then((img) =>
+                updateUserProfile({ ...user, photoURL: img }).then(() => {
+                  setAuth({
+                    ...auth,
+                    email: user.email,
+                    name: user.name,
+                    photoURL: img,
+                  })
+                })
+              )
+            }
+          })
+        } else {
+        }
       })
       .catch((err) => {
         setError(err.message)
