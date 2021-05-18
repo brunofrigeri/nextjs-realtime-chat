@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useAuth } from '../lib/auth'
 
 export default function withAuth(Component: any) {
@@ -7,13 +7,16 @@ export default function withAuth(Component: any) {
     const { auth, loading } = useAuth()
     const router = useRouter()
 
-    const isAuthenticated = auth
+    const isAuthenticated = !!auth?.uid
 
-    const shouldRedirectToApp =
-      isAuthenticated && !router.pathname.startsWith('/auth') && !loading
-
-    const shouldRedirectToLogin =
-      !isAuthenticated && router.pathname.startsWith('/auth') && !loading
+    const shouldRedirectToApp = useMemo(
+      () => isAuthenticated && !router.pathname.startsWith('/auth'),
+      [isAuthenticated]
+    )
+    const shouldRedirectToLogin = useMemo(
+      () => !isAuthenticated && router.pathname.startsWith('/auth'),
+      [isAuthenticated]
+    )
 
     const redirectToApp = useCallback(() => {
       const appRedirectDestination = '/auth'
@@ -46,11 +49,12 @@ export default function withAuth(Component: any) {
       shouldRedirectToApp,
       redirectToLogin,
       redirectToApp,
+      loading,
     ])
 
     const isRedirecting = shouldRedirectToLogin || shouldRedirectToApp
 
-    if (isRedirecting) return <p>Loading ... </p>
+    if (isRedirecting || loading) return <p>Loading ... </p>
 
     return <Component {...props} />
   }

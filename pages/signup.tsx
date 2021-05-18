@@ -12,7 +12,7 @@ function SignUp() {
   const [name, setName] = useState<string>('')
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
-  const [photoURL, setPhotoURL] = useState<File | undefined>(undefined)
+  const [photoURL, setPhotoURL] = useState<File | string | undefined>(undefined)
 
   const createUserWithEmailNPassword = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
