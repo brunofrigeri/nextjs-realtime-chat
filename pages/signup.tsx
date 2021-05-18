@@ -71,7 +71,7 @@ function SignUp() {
       <p className="self-center text-sm">
         Already have an account?{' '}
         <Link href="/">
-          <span className="cursor-pointer text-sm underline text-blue-500">
+          <span className="cursor-pointer text-sm underline text-blue">
             Click here.
           </span>
         </Link>

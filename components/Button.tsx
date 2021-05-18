@@ -7,7 +7,7 @@ export default function Button({ loading, children }: ButtonProps) {
   return (
     <button
       type="submit"
-      className="mt-8 p-2 rounded-lg flex justify-center text-white font-bold bg-blue-500"
+      className="mt-8 p-2 rounded-lg flex justify-center text-white font-bold bg-blue"
       disabled={loading}
     >
       {loading ? (

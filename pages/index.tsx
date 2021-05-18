@@ -44,7 +44,7 @@ function Home() {
       <p className="self-center text-sm">
         Haven't an account yet?{' '}
         <Link href="/signup">
-          <span className="cursor-pointer text-sm underline text-blue-500">
+          <span className="cursor-pointer text-sm underline text-blue">
             Create here.
           </span>
         </Link>

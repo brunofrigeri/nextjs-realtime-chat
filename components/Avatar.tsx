@@ -1,6 +1,6 @@
 interface AvatarProps {
-  image?: string
-  name?: string
+  image?: string | null
+  name?: string | null
   scale?: number
   children?: React.ReactNode
   onClick?(): void

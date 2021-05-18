@@ -9,7 +9,7 @@ export type UserAuthentication = {
   photoURL?: File | string
 }
 
-type User = {
+export type User = {
   uid?: string
   name: string | null
   email?: string | null
