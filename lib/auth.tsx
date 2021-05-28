@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { putProfilePhoto, updateUserProfile } from './db'
+import { createUserInRealtimeDatabase, putProfilePhoto } from './db'
 import firebase from './firebase'
 
 export type UserAuthentication = {
-  name: string
+  name?: string
   email: string
   password: string
   photoURL?: File | string
@@ -13,7 +13,7 @@ export type User = {
   uid?: string
   name: string | null
   email?: string | null
-  photoURL: string | null
+  photoURL?: string | null
   token?: string | null
 }
 
@@ -22,7 +22,7 @@ export interface AuthContext {
   loading: boolean
   error: string | null
   signInWithEmailAndPassword: (email: string, password: string) => {}
-  createUserWithEmailAndPassword: (user: UserAuthentication) => {}
+  createUserWithEmailAndPassword: (user: UserAuthentication) => void
   signOut: () => {}
   updateUser: (data: { name: string; photoURL: string | null }) => {}
 }
@@ -53,7 +53,6 @@ function useProvideAuth() {
   const authStateChanged = async (authState: firebase.User) => {
     if (authState) {
       const formattedAuthState = formatAuth(authState)
-
       const token = await authState.getIdToken()
       formattedAuthState.token = token
 
@@ -71,7 +70,7 @@ function useProvideAuth() {
     name: string
     photoURL: string | null
   }) => {
-    await firebase
+    return firebase
       .auth()
       .currentUser?.updateProfile({
         displayName: data.name,
@@ -96,29 +95,23 @@ function useProvideAuth() {
       })
   }
 
-  const createUserWithEmailAndPassword = async (user: UserAuthentication) => {
+  const createUserWithEmailAndPassword = (user: UserAuthentication) => {
     setLoading(true)
-    return firebase
+    firebase
       .auth()
       .createUserWithEmailAndPassword(user.email, user.password)
       .then((res) => {
-        if (res.user) {
-          putProfilePhoto(res.user.uid, user?.photoURL as File).then((res) => {
-            if (res) {
-              res.ref.getDownloadURL().then((img) =>
-                updateUserProfile({ ...user, photoURL: img }).then(() => {
-                  setAuth({
-                    ...auth,
-                    email: user.email,
-                    name: user.name,
-                    photoURL: img,
-                  })
+        if (res.user)
+          putProfilePhoto(res.user.uid).then((response) =>
+            response?.ref.getDownloadURL().then((img) => {
+              if (res.user && res.user.uid) {
+                createUserInRealtimeDatabase(res.user.uid, {
+                  photoURL: img,
+                  ...user,
                 })
-              )
-            }
-          })
-        } else {
-        }
+              }
+            })
+          )
       })
       .catch((err) => {
         setError(err.message)

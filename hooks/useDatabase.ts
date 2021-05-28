@@ -32,5 +32,6 @@ export default function useDatabase<T>({ asyncFunction }: UseDatabaseProps<T>) {
     loading,
     error,
     data,
+    refetch: fetch,
   }
 }

@@ -11,7 +11,7 @@ export default function Dashboard({ children, auth, signOut }: DashboardProps) {
   return auth ? (
     <div className="flex flex-row">
       <Sidebar auth={auth} signOut={signOut} />
-      <div className="px-8">{children}</div>
+      {children}
     </div>
   ) : null
 }

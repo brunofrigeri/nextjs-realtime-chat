@@ -54,7 +54,9 @@ export default function withAuth(Component: any) {
 
     const isRedirecting = shouldRedirectToLogin || shouldRedirectToApp
 
-    if (isRedirecting || loading) return <p>Loading ... </p>
+    if (isRedirecting) return <p>Loading ... </p>
+
+    if (loading) return null
 
     return <Component {...props} />
   }
